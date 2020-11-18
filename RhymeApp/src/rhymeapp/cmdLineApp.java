@@ -56,7 +56,11 @@ class cmdLineApp
             System.out.println("Could not add rhymes to Analyzer.");
         } else {
             Analysis anOut = an.createAnalysis();
-            outLine = anOut.toString();
+            if (anOut == null) {
+                outLine = "Rhyme_Density: 0";
+            } else {
+                outLine = anOut.toString();
+            }
         }
         System.out.println(outLine);
         return 0;
