@@ -14,8 +14,8 @@ class cmdLineApp
 
     }
 
-    ArrayList<PLine> readFile( String filename ) 
-        throws IOException 
+    ArrayList<PLine> readFile( String filename )
+        throws IOException
     {
         FileReader reader = new FileReader( new File( filename ) );
         BufferedReader input = new BufferedReader( reader );
@@ -32,25 +32,51 @@ class cmdLineApp
 
         return inLines;
     }
-  
+
     public int run( String[] args ) throws Exception
     {
-        st = new Stats(mainUI.STATS_FILE);
+        String STATS_FILE = "iterationStatsUF.txt";
+        st = new Stats(STATS_FILE);
         tr = new Transcriptor();
         sc = new Scoring(st, Stats.SPLIT);
         det = new Detector(sc);
-        
-        ArrayList<PLine> lines = readFile( args[0] );
-        Iterator<PLine> iter = lines.iterator();
-        while( iter.hasNext() ) {
-            PLine line = iter.next();
+
+        String inputStr = args[0];
+        String[] plainLines = inputStr.split("\n");
+        if (plainLines.length < 2) return 0;
+        ArrayList<PLine> inLines = new ArrayList<PLine>();
+        for (int i=0; i<plainLines.length; i++) {
+            inLines.add(tr.transcribe(plainLines[i]));
         }
-
-        RhymeCollection rc = det.getRhymes(lines);
-        rc.lines = lines;
-        output(rc);
-
+        Analyzer an = new Analyzer("Input Lines", sc);
+        String outLine = "";
+        RhymeCollection rc = det.getRhymes(inLines);
+        rc.lines = inLines;
+        if (!an.addRhymes(rc)) {
+            System.out.println("Could not add rhymes to Analyzer.");
+        } else {
+            Analysis anOut = an.createAnalysis();
+            outLine = anOut.toString();
+        }
+        System.out.println(outLine);
         return 0;
+        // // OLD STUFF
+        // st = new Stats(mainUI.STATS_FILE);
+        // tr = new Transcriptor();
+        // sc = new Scoring(st, Stats.SPLIT);
+        // det = new Detector(sc);
+
+        // ArrayList<PLine> lines = readFile( args[0] );
+        // Iterator<PLine> iter = lines.iterator();
+        // while( iter.hasNext() ) {
+        //     PLine line = iter.next();
+        // }
+
+        // RhymeCollection rc = det.getRhymes(lines);
+        // rc.lines = lines;
+        // output(rc);
+
+        // return 0;
     }
 
     private int wordIndex(PLine pl, int sylIndex) {
