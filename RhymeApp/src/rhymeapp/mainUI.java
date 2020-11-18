@@ -460,7 +460,11 @@ public class mainUI extends javax.swing.JFrame {
     */
     public static void main(String args[]) {
         if ( args.length > 0 ) {
-            System.exit((new cmdLineApp()).run(args));
+            try {
+				System.exit((new cmdLineApp()).run(args));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
         } else {
             java.awt.EventQueue.invokeLater(new Runnable() {
                 public void run() {
